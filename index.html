@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex;gap: 10px;">
+            <input type="number" placeholder="Enter battery.." id="battery">
+            <div id="rpm">Rpm</div>
+            <div id="rpmMaxDisplay" class="rpm-max"></div>
+        </div>
+        <div style="margin-top: 10px;">
+            <label for="oilInput">Enter Oil (max 10L):</label>
+            <input type="number" id="oilInput" min="0" max="10" step="0.1" />
+        </div>
+        <div>
+            <label for="tempInput">Enter Temperature (°C):</label>
+            <input type="number" id="tempInput" min="10" max="70" step="1" oninput="checkTemperature()" />
+        </div>
+        <div>
+            <label for="rediatorInput">Enter Radiator Water (L):</label>
+            <input type="number" id="rediatorInput" min="0" max="10" step="0.1" oninput="checkRadiatorWater()" />
+        </div>
+        <div class="display">
+            <p id="oilLevelDisplay">Oil Level: 0L</p>
+            <p id="temperatureDisplay">Temperature: 25°C</p>
+            <p id="temperatureAlert"></p>
+            <p id="rediatorDisplay">Radiator: 0L</p>
+        </div>
+        <div class="main">
+            <p>Speed: <span id="clickCount">0km</span></p>
+            <p>Gair: <span id="gair">0</span></p>
+            <p id="range">Range: 0 km</p>
+            <p id="fuel">Fuel : 10L</p>
+        </div>
+        <div id="average">Average: - km/l</div>
+        <div style="display: flex;">
+            <select id="option">
+                <option value="driving">Driving</option>
+                <option value="neutral" id="new">Neutral</option>
+                <option value="reverse">Reverse</option>
+            </select>
+            <button id="hazard">Hazard</button>
+        </div>
+        <div>
+            <button id="brkBtn">Break</button>
+            <button id="myBtn">Lever</button>
+            <audio src="music.mp3" id="myAudio"></audio>
+            <button id="playButton">Horn</button>
+        </div>
+        <div class="circle">
+            <button id="lindicator">Left</button>
+            <span class="innerclass"></span>
+            <button id="rindicator">Right</button>
+            <span class="innerclass"></span>
+            <span class="brk"></span>
+            <span id="avg">Average - </span>
+        </div>
+        <div style="margin-top: 10px;">
+            <button id="sbtnleft">Stering left</button>
+            <button id="sbtnright">Stering right</button>
+        </div>
+        <div class="pressure">
+            <label for="">Pw-1,2 :</label>
+            <input type="number" id="psure">
+            <label for="">Pw-3,4 :</label>
+            <input type="number" id="psure2">
+        </div>
+        <div class="last">
+            <span class="sitbelt">Seat belt</span>
+            <span class="airbag">Airbag</span>
+            <select id="mode">
+                <option value="mode2x2" id="mode1">Mode : 2 x 2</option>
+                <option value="mode4x4" id="mode2">Mode : 4 x 4</option>
+            </select>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
