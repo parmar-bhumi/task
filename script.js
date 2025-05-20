@@ -6,7 +6,6 @@ const mode1 = document.getElementById("mode1");
 const mode2 = document.getElementById("mode2");
 
 let isBlinking = false;
-let intervalId;
 let pressureEffect = 0;
 
 //give alert when battery volts is less than 24
@@ -89,26 +88,29 @@ let interval;
 let count = 0;
 
 button.addEventListener("mouseover", () => {
-    battery()
-    pressure()
-    if (options.value === "neutral") return;
-    if (options.value === "reverse") {
-        if (num < 10) {
-            count++;
-            countDisplay.textContent = `${count}km`;
-            updateGear(count)
-            return;
-        }
-    }
+    battery();
+    pressure();
+
+    if (options.value === "neutral" && temp >= 70) return;
+    if (temp >= 70) return;
 
     interval = setInterval(() => {
+        
+        if (options.value === "reverse") {
+            if (count < 10) {
+                count++;
+                countDisplay.textContent = `${count}km`;
+                updateGear(count);
+            }
+            return; 
+        }
+
         if (count < 200) {
             count++;
             countDisplay.textContent = `${count}km`;
-            updateGear(count)
+            updateGear(count);
         }
-
-    }, 1000)
+    }, 1000);
 });
 
 button.addEventListener('mouseout', () => {
@@ -160,31 +162,34 @@ const right_indi_btn = document.getElementById("rindicator");
 const circle = document.getElementsByClassName("innerclass")[0];
 const circle2 = document.getElementsByClassName("innerclass")[1];
 
+let intervalId = null;
+let activeIndicator = null;
+
+function stopBlinking() {
+    clearInterval(intervalId);
+    circle.classList.remove("blink");
+    circle2.classList.remove("blink");
+    intervalId = null;
+    activeIndicator = null;
+}
+
 left_indi_button.addEventListener("click", function () {
-    if (isBlinking) {
-        clearInterval(intervalId);
-        circle.classList.remove("blink");
-        isBlinking = false;
+    if (activeIndicator === "left") {
+        stopBlinking();
     } else {
+        stopBlinking();
         circle.classList.add("blink");
-        intervalId = setInterval(() => {
-            //
-        }, 1000);
-        isBlinking = true;
+        activeIndicator = "left";
     }
 });
 
 right_indi_btn.addEventListener("click", function () {
-    if (isBlinking) {
-        clearInterval(intervalId);
-        circle2.classList.remove("blink");
-        isBlinking = false;
+    if (activeIndicator === "right") {
+        stopBlinking();
     } else {
+        stopBlinking();
         circle2.classList.add("blink");
-        intervalId = setInterval(() => {
-            //
-        }, 1000);
-        isBlinking = true;
+        activeIndicator = "right";
     }
 });
 
@@ -261,7 +266,6 @@ airbag.addEventListener('click', () => {
 // }
 
 // RPM
-
 let currentRpm = 0;
 let leverUp;
 let rpmInterval;
@@ -518,7 +522,7 @@ rearPressureInput.addEventListener('input', () => {
 });
 
 //avg/2 = range when in 4x4 mode
-const avgdisplay = document.getElementById("avg");
+const avgdisplay = document.getElementById("average");
 let num = 0;
 setInterval(() => {
     // num+=5;
@@ -527,3 +531,40 @@ setInterval(() => {
     }
     avgdisplay.textContent = `Average - ${num}`;
 }, 1000)
+
+//distance
+const TYRE_CIRCUMFERENCE_METERS = 2.3156;
+const ROTATIONS_PER_MIN = 432;
+
+let totalTimeInMinutes = 0;
+let distanceKm = 0;
+let lastDistance = 0;
+let previousSpeed = 0;
+
+const distanceDisplay = document.getElementById("distanceDisplay");
+const lastDistanceDisplay = document.getElementById("lastDistanceDisplay"); // Add this element in HTML
+
+function calculateDistanceKm(rotationsPerMin, timeInMinutes, tyreCircumference = TYRE_CIRCUMFERENCE_METERS) {
+    const totalRotations = rotationsPerMin * timeInMinutes;
+    const distanceInMeters = totalRotations * tyreCircumference;
+    return distanceInMeters / 1000;
+}
+
+// Interval to simulate driving every 6 seconds
+setInterval(() => {
+    const currentSpeed = count;
+
+    if (currentSpeed === 0 && previousSpeed !== 0) {
+        // Show last distance when speed becomes 0
+        lastDistance = distanceKm;
+        lastDistanceDisplay.textContent = `Last Distance Covered: ${lastDistance.toFixed(2)} km`;
+        totalTimeInMinutes = 0; // reset time
+        distanceKm = 0; // reset ongoing distance
+    } else if (currentSpeed > 0) {
+        totalTimeInMinutes += 0.1;
+        distanceKm = calculateDistanceKm(ROTATIONS_PER_MIN, totalTimeInMinutes);
+        distanceDisplay.textContent = `Distance: ${distanceKm.toFixed(2)} km`;
+    }
+
+    previousSpeed = currentSpeed;
+}, 6000);
